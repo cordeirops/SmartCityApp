@@ -116,12 +116,16 @@ public class SmartCityApp {
 
         try {
             // Get database connection
+<<<<<<< HEAD
             Connection connection = DBConnection.getConnection();
 
             if (connection == null) {
                 System.out.println("❌ Failed to connect to database.");
                 return;
             }
+=======
+                Connection connection = DBConnection.getConnection();
+>>>>>>> e5ef2e0 (Fix standardized error message)
 
             // Check if username already exists
             PreparedStatement checkPstmt = connection.prepareStatement(checkQuery);
@@ -343,7 +347,7 @@ public class SmartCityApp {
 
             // Handle case when no places found
             if (!hasResults) {
-                System.out.println("❌ No places available at the moment.");
+                System.out.println("[!] No places found");
             }
 
             System.out.println("\n" + "-".repeat(50));
@@ -436,7 +440,7 @@ public class SmartCityApp {
 
             // Handle no results found
             if (!found) {
-                System.out.println("❌ No places found in category: " + searchCategory);
+                System.out.println("[!] No results found for '"  + searchCategory + "'");
             }
 
             System.out.println("-".repeat(50));
@@ -496,7 +500,7 @@ public class SmartCityApp {
 
             // Handle no results found
             if (!found) {
-                System.out.println("❌ No places found in location: " + searchLocation);
+                System.out.println("[!] No results found for '" + searchLocation + "'");
             }
 
             System.out.println("-".repeat(50));
@@ -672,7 +676,7 @@ public class SmartCityApp {
 			ResultSet rs = selectPstmt.executeQuery();
 
 			if (!rs.next()) {
-				System.out.println("❌ Error: Place with ID " + placeId + " not found.");
+				System.out.println("[!] No results found for ID '" +  placeId + "'");
 				return;
 			}
 
@@ -773,7 +777,7 @@ public class SmartCityApp {
             if (rowsAffected > 0) {
                 System.out.println("✅ Success! Place with ID " + placeId + " has been deleted.");
             } else {
-                System.out.println("❌ Error: Place with ID " + placeId + " not found.");
+                System.out.println("[!] No results found for ID '" +  placeId + "'");
             }
 
             // Close resources
