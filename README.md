@@ -170,6 +170,63 @@ Please also review our [**Code of Conduct**](CODE_OF_CONDUCT.md) before particip
 A huge shoutout to everyone who has contributed to this project! 🙌
 
 <!-- readme: contributors -start -->
+<table>
+	<tbody>
+		<tr>
+            <td align="center">
+                <a href="https://github.com/Rajath2005">
+                    <img src="https://avatars.githubusercontent.com/u/168326104?v=4" width="100;" alt="Rajath2005"/>
+                    <br />
+                    <sub><b>Rajath Kiran A</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/alexanderliberacion-cmd">
+                    <img src="https://avatars.githubusercontent.com/u/244034238?v=4" width="100;" alt="alexanderliberacion-cmd"/>
+                    <br />
+                    <sub><b>alexanderliberacion-cmd</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/rajibul004">
+                    <img src="https://avatars.githubusercontent.com/u/157000457?v=4" width="100;" alt="rajibul004"/>
+                    <br />
+                    <sub><b>Rajibul Mondal</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/HemendraRoy">
+                    <img src="https://avatars.githubusercontent.com/u/158675218?v=4" width="100;" alt="HemendraRoy"/>
+                    <br />
+                    <sub><b>HemendraRoy</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/JhansiOruganti-43">
+                    <img src="https://avatars.githubusercontent.com/u/155613006?v=4" width="100;" alt="JhansiOruganti-43"/>
+                    <br />
+                    <sub><b>Jhansi Oruganti</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/Nishcahy">
+                    <img src="https://avatars.githubusercontent.com/u/141355948?v=4" width="100;" alt="Nishcahy"/>
+                    <br />
+                    <sub><b>Nishchay</b></sub>
+                </a>
+            </td>
+		</tr>
+		<tr>
+            <td align="center">
+                <a href="https://github.com/sshrrutiiii">
+                    <img src="https://avatars.githubusercontent.com/u/196079073?v=4" width="100;" alt="sshrrutiiii"/>
+                    <br />
+                    <sub><b>Shruti Dixit</b></sub>
+                </a>
+            </td>
+		</tr>
+	<tbody>
+</table>
 <!-- readme: contributors -end -->
 
 *Want to see your face here? Check out our [Contribution guide](CONTRIBUTING.md)!*
