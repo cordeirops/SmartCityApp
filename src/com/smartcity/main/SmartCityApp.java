@@ -33,6 +33,7 @@ public class SmartCityApp {
 
         // Loop to repeatedly show menu until user exits
         while (isRunning) {
+
             displayMenu();
 
             // Get user's choice
@@ -113,6 +114,7 @@ public class SmartCityApp {
         String checkQuery = "SELECT id FROM users WHERE username = ?";
         String insertQuery = "INSERT INTO users (username, password, role) VALUES (?, ?, ?)";
 
+<<<<<<< HEAD
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement checkPstmt = connection.prepareStatement(checkQuery);
              PreparedStatement insertPstmt = connection.prepareStatement(insertQuery)) {
@@ -130,6 +132,41 @@ public class SmartCityApp {
             insertPstmt.setString(1, username);
             insertPstmt.setString(2, password);
             insertPstmt.setString(3, "USER"); // Default role for new users
+=======
+        try {
+            // Get database connection
+
+                Connection connection = DBConnection.getConnection();
+
+                if (connection == null) {
+                    System.out.println("❌ Failed to connect to database.");
+                    return;
+                }
+
+                // Check if username already exists
+                PreparedStatement checkPstmt = connection.prepareStatement(checkQuery);
+                checkPstmt.setString(1, username);
+                ResultSet resultSet = checkPstmt.executeQuery();
+
+
+                if (resultSet.next()) {
+                    System.out.println("❌ Error: Username already exists. Please choose a different username.");
+                    resultSet.close();
+                    checkPstmt.close();
+                    connection.close();
+                    return;
+                }
+
+                resultSet.close();
+                checkPstmt.close();
+
+                // Create prepared statement for insert
+                PreparedStatement insertPstmt = connection.prepareStatement(insertQuery);
+                insertPstmt.setString(1, username);
+                insertPstmt.setString(2, password);
+                insertPstmt.setString(3, "USER"); // Default role for new users
+
+>>>>>>> e78e6cc2c18eb111e17797d863cd8d5241df2e47
 
             // Execute insert
             int rowsAffected = insertPstmt.executeUpdate();
@@ -192,6 +229,7 @@ public class SmartCityApp {
 
     // Display admin menu with admin-specific options
     private static void showAdminMenu(String username) {
+
         boolean inAdminMenu = true;
 
         while (inAdminMenu) {
@@ -678,11 +716,21 @@ public class SmartCityApp {
 		return name != null && !name.trim().isEmpty();
 	}
 	private static boolean isValidLocation(String location) {
+<<<<<<< HEAD
         return location != null && !location.trim().isEmpty();
     }
 
     private static void clearScreen() {
         System.out.print("\033[H\033[2J");
         System.out.flush();
+=======
+		return location != null && !location.trim().isEmpty();
+	}
+
+    private static void clearScreen() {
+        for(int i = 0; i < 50; i++) {
+            System.out.print(" ");
+        }
+>>>>>>> e78e6cc2c18eb111e17797d863cd8d5241df2e47
     }
 }
