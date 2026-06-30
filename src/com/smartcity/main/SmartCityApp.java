@@ -55,7 +55,6 @@ public class SmartCityApp {
                     System.out.println("Invalid choice. Please try again.");
             }
         }
-
         scanner.close();
     }
 
@@ -114,33 +113,20 @@ public class SmartCityApp {
         String checkQuery = "SELECT id FROM users WHERE username = ?";
         String insertQuery = "INSERT INTO users (username, password, role) VALUES (?, ?, ?)";
 
-        try {
-            // Get database connection
-            Connection connection = DBConnection.getConnection();
-
-            if (connection == null) {
-                System.out.println("❌ Failed to connect to database.");
-                return;
-            }
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement checkPstmt = connection.prepareStatement(checkQuery);
+             PreparedStatement insertPstmt = connection.prepareStatement(insertQuery)) {
 
             // Check if username already exists
-            PreparedStatement checkPstmt = connection.prepareStatement(checkQuery);
             checkPstmt.setString(1, username);
             ResultSet resultSet = checkPstmt.executeQuery();
 
             if (resultSet.next()) {
                 System.out.println("❌ Error: Username already exists. Please choose a different username.");
-                resultSet.close();
-                checkPstmt.close();
-                connection.close();
                 return;
             }
 
-            resultSet.close();
-            checkPstmt.close();
-
             // Create prepared statement for insert
-            PreparedStatement insertPstmt = connection.prepareStatement(insertQuery);
             insertPstmt.setString(1, username);
             insertPstmt.setString(2, password);
             insertPstmt.setString(3, "USER"); // Default role for new users
@@ -153,10 +139,6 @@ public class SmartCityApp {
             } else {
                 System.out.println("❌ Error: Failed to register user. Please try again.");
             }
-
-            // Close resources
-            insertPstmt.close();
-            connection.close();
 
         } catch (SQLException e) {
             System.out.println("❌ Error: Failed to register user.");
@@ -179,28 +161,18 @@ public class SmartCityApp {
         // SQL query to fetch user by username and password
         String query = "SELECT role FROM users WHERE username = ? AND password = ?";
 
-        try {
-            // Get database connection
-            Connection connection = DBConnection.getConnection();
-
-            if (connection == null) {
-                System.out.println("❌ Failed to connect to database.");
-                return;
-            }
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(query)) {
 
             // Create prepared statement with parameter binding
-            PreparedStatement pstmt = connection.prepareStatement(query);
             pstmt.setString(1, username);
             pstmt.setString(2, password);
-
-            // Execute query
             ResultSet resultSet = pstmt.executeQuery();
 
             // Check if user credentials match
             if (resultSet.next()) {
                 // Get user role from database
                 String role = resultSet.getString("role");
-
                 System.out.println("✅ Success! Welcome back, " + username + "!");
 
                 // Show appropriate menu based on user role
@@ -212,12 +184,6 @@ public class SmartCityApp {
             } else {
                 System.out.println("❌ Error: Username or password incorrect. Please try again.");
             }
-
-            // Close resources
-            resultSet.close();
-            pstmt.close();
-            connection.close();
-
         } catch (SQLException e) {
             System.out.println("❌ Error: Failed to login user.");
             System.out.println("   Error message: " + e.getMessage());
@@ -229,6 +195,7 @@ public class SmartCityApp {
         boolean inAdminMenu = true;
 
         while (inAdminMenu) {
+            clearScreen();
             System.out.println("\n===== Admin Menu (User: " + username + ") =====");
             System.out.println("1. View all users");
             System.out.println("2. Manage city resources");
@@ -265,6 +232,7 @@ public class SmartCityApp {
         boolean inUserMenu = true;
 
         while (inUserMenu) {
+            clearScreen();
             System.out.println("\n===== User Menu (User: " + username + ") =====");
             System.out.println("1. Explore city attractions");
             System.out.println("2. Search places");
@@ -306,18 +274,8 @@ public class SmartCityApp {
         // SQL query to fetch all places
         String query = "SELECT * FROM places";
 
-        try {
-            // Get database connection
-            Connection connection = DBConnection.getConnection();
-
-            if (connection == null) {
-                System.out.println("❌ Failed to connect to database.");
-                return;
-            }
-
-            // Create statement and execute query
-            PreparedStatement pstmt = connection.prepareStatement(query);
-            ResultSet resultSet = pstmt.executeQuery();
+        try ( Connection connection = DBConnection.getConnection();
+              PreparedStatement pstmt = connection.prepareStatement(query)){
 
             // Display header
             System.out.println("\n🏙️  ===== ALL CITY ATTRACTIONS =====");
@@ -325,6 +283,7 @@ public class SmartCityApp {
 
             boolean hasResults = false;
 
+            ResultSet resultSet = pstmt.executeQuery();
             // Loop through ResultSet and display each place
             while (resultSet.next()) {
                 hasResults = true;
@@ -347,11 +306,6 @@ public class SmartCityApp {
             }
 
             System.out.println("\n" + "-".repeat(50));
-
-            // Close resources
-            resultSet.close();
-            pstmt.close();
-            connection.close();
 
         } catch (SQLException e) {
             System.out.println("❌ Error: Failed to fetch places from database.");
@@ -400,25 +354,17 @@ public class SmartCityApp {
         // SQL query with LIKE for case-insensitive search
         String query = "SELECT * FROM places WHERE LOWER(category) LIKE LOWER(?)";
 
-        try {
-            // Get database connection
-            Connection connection = DBConnection.getConnection();
-
-            if (connection == null) {
-                System.out.println("❌ Failed to connect to database.");
-                return;
-            }
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(query)){
 
             // Create prepared statement with parameter binding
-            PreparedStatement pstmt = connection.prepareStatement(query);
             pstmt.setString(1, "%" + searchCategory + "%"); // Add wildcards for partial matching
-            ResultSet resultSet = pstmt.executeQuery();
 
             // Display search results
             System.out.println("\n🔍 Search Results for Category: " + searchCategory);
             System.out.println("-".repeat(50));
-
             boolean found = false;
+            ResultSet resultSet = pstmt.executeQuery();
 
             // Loop through ResultSet and display matching places
             while (resultSet.next()) {
@@ -438,13 +384,7 @@ public class SmartCityApp {
             if (!found) {
                 System.out.println("❌ No places found in category: " + searchCategory);
             }
-
             System.out.println("-".repeat(50));
-
-            // Close resources
-            resultSet.close();
-            pstmt.close();
-            connection.close();
 
         } catch (SQLException e) {
             System.out.println("❌ Error: Failed to search places by category.");
@@ -460,25 +400,17 @@ public class SmartCityApp {
         // SQL query with LIKE for case-insensitive search
         String query = "SELECT * FROM places WHERE LOWER(location) LIKE LOWER(?)";
 
-        try {
-            // Get database connection
-            Connection connection = DBConnection.getConnection();
-
-            if (connection == null) {
-                System.out.println("❌ Failed to connect to database.");
-                return;
-            }
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(query)){
 
             // Create prepared statement with parameter binding
-            PreparedStatement pstmt = connection.prepareStatement(query);
             pstmt.setString(1, "%" + searchLocation + "%"); // Add wildcards for partial matching
-            ResultSet resultSet = pstmt.executeQuery();
 
             // Display search results
             System.out.println("\n🔍 Search Results for Location: " + searchLocation);
             System.out.println("-".repeat(50));
-
             boolean found = false;
+            ResultSet resultSet = pstmt.executeQuery();
 
             // Loop through ResultSet and display matching places
             while (resultSet.next()) {
@@ -487,24 +419,16 @@ public class SmartCityApp {
                 String category = resultSet.getString("category");
                 String location = resultSet.getString("location");
                 String description = resultSet.getString("description");
-
                 System.out.println("\n📍 " + name);
                 System.out.println("   Category: " + category);
                 System.out.println("   Location: " + location);
                 System.out.println("   Description: " + description);
             }
-
             // Handle no results found
             if (!found) {
                 System.out.println("❌ No places found in location: " + searchLocation);
             }
-
             System.out.println("-".repeat(50));
-
-            // Close resources
-            resultSet.close();
-            pstmt.close();
-            connection.close();
 
         } catch (SQLException e) {
             System.out.println("❌ Error: Failed to search places by location.");
@@ -549,7 +473,6 @@ public class SmartCityApp {
             }
         }
     }
-
     // Add a new place to the city
     private static void addNewPlace() {
         System.out.println("\n--- Add New Place ---");
@@ -565,7 +488,6 @@ public class SmartCityApp {
             scanner.nextLine(); // Clear newline from input buffer
             return;
         }
-
 
         // Get place name
         System.out.print("Enter place name: ");
@@ -604,17 +526,10 @@ public class SmartCityApp {
         // SQL query to insert new place
         String query = "INSERT INTO places (id, name, category, location, description) VALUES (?, ?, ?, ?, ?)";
 
-        try {
-            // Get database connection
-            Connection connection = DBConnection.getConnection();
-
-            if (connection == null) {
-                System.out.println("❌ Failed to connect to database.");
-                return;
-            }
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(query)){
 
             // Create prepared statement with parameter binding
-            PreparedStatement pstmt = connection.prepareStatement(query);
             pstmt.setInt(1, id);
             pstmt.setString(2, name);
             pstmt.setString(3, category);
@@ -630,10 +545,6 @@ public class SmartCityApp {
                 System.out.println("❌ Error: Failed to add place. Please try again.");
             }
 
-            // Close resources
-            pstmt.close();
-            connection.close();
-
         } catch (SQLException e) {
             System.out.println("❌ Error: Failed to add new place to database.");
             System.out.println("   Error message: " + e.getMessage());
@@ -647,9 +558,9 @@ public class SmartCityApp {
 		System.out.print("Enter place ID to update: ");
 		int placeId ;
         try {
-            placeId =scanner.nextInt();
+            placeId = scanner.nextInt();
             scanner.nextLine();
-        }catch (InputMismatchException e){
+        } catch (InputMismatchException e){
             System.out.println("❌ Invalid ID. Please enter a number.");
             scanner.nextLine();
             return;
@@ -658,18 +569,13 @@ public class SmartCityApp {
 		String selectQuery = "SELECT * FROM places WHERE id = ?";
 		String updateQuery = "UPDATE places SET name = ?, category = ?, location = ?, description = ? WHERE id = ?";
 
-		try {
-			Connection connection = DBConnection.getConnection();
-
-			if (connection == null) {
-				System.out.println("❌ Failed to connect to database.");
-				return;
-			}
+		try (Connection connection = DBConnection.getConnection();
+             PreparedStatement selectPstmt = connection.prepareStatement(selectQuery);
+             PreparedStatement updatePstmt = connection.prepareStatement(updateQuery)){
 
 			// Fetch existing place
-			PreparedStatement selectPstmt = connection.prepareStatement(selectQuery);
 			selectPstmt.setInt(1, placeId);
-			ResultSet rs = selectPstmt.executeQuery();
+            ResultSet rs = selectPstmt.executeQuery();
 
 			if (!rs.next()) {
 				System.out.println("❌ Error: Place with ID " + placeId + " not found.");
@@ -708,7 +614,6 @@ public class SmartCityApp {
 			if (newDescription.isEmpty()) newDescription = currentDescription;
 
 			// Single correct update query
-			PreparedStatement updatePstmt = connection.prepareStatement(updateQuery);
 			updatePstmt.setString(1, newName);
 			updatePstmt.setString(2, newCategory);
 			updatePstmt.setString(3, newLocation);
@@ -722,12 +627,6 @@ public class SmartCityApp {
 			} else {
 				System.out.println("❌ Error: Update failed.");
 			}
-
-			// Close resources
-			rs.close();
-			selectPstmt.close();
-			updatePstmt.close();
-			connection.close();
 
 		} catch (SQLException e) {
 			System.out.println("❌ Error: Failed to update place.");
@@ -745,7 +644,7 @@ public class SmartCityApp {
         try {
             placeId = scanner.nextInt();
             scanner.nextLine();
-        }catch (InputMismatchException e){
+        } catch (InputMismatchException e){
             System.out.println("❌ Invalid ID. Please enter a number.");
             scanner.nextLine(); // Clear newline from input buffer
             return;
@@ -754,17 +653,10 @@ public class SmartCityApp {
         // SQL query to delete place by ID
         String query = "DELETE FROM places WHERE id = ?";
 
-        try {
-            // Get database connection
-            Connection connection = DBConnection.getConnection();
-
-            if (connection == null) {
-                System.out.println("❌ Failed to connect to database.");
-                return;
-            }
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(query)){
 
             // Create prepared statement with parameter binding
-            PreparedStatement pstmt = connection.prepareStatement(query);
             pstmt.setInt(1, placeId);
 
             // Execute delete
@@ -776,21 +668,21 @@ public class SmartCityApp {
                 System.out.println("❌ Error: Place with ID " + placeId + " not found.");
             }
 
-            // Close resources
-            pstmt.close();
-            connection.close();
-
         } catch (SQLException e) {
             System.out.println("❌ Error: Failed to delete place from database.");
             System.out.println("   Error message: " + e.getMessage());
         }
-		
-		
+
     }
 	private static boolean isValidPlaceName(String name) {
 		return name != null && !name.trim().isEmpty();
 	}
 	private static boolean isValidLocation(String location) {
-		return location != null && !location.trim().isEmpty();
-	}
+        return location != null && !location.trim().isEmpty();
+    }
+
+    private static void clearScreen() {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
+    }
 }
