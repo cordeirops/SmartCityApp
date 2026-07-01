@@ -26,6 +26,15 @@ public class SmartCityApp {
     // Scanner object shared across methods
     private static Scanner scanner = new Scanner(System.in);
 
+
+    // SQL Query Constants (Login/Register)
+    private static final String CHECK_USERNAME_EXISTS_QUERY = "SELECT id FROM users WHERE username = ?";
+
+    private static final String INSERT_USER_QUERY = "INSERT INTO users (username, password, role) VALUES (?, ?, ?)";
+
+    private static final String LOGIN_QUERY = "SELECT role FROM users WHERE username = ? AND password = ?";
+
+    
     public static void main(String[] args) {
         System.out.println("Smart City Guide Started Successfully");
 
