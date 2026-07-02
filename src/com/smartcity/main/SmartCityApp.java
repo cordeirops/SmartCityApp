@@ -82,6 +82,9 @@ public class SmartCityApp {
         return password.matches(regex);
     }
 
+    private static final String checkQuery = "SELECT id FROM users WHERE username = ?";
+    private static final String insertQuery = "INSERT INTO users (username, password, role) VALUES (?, ?, ?)";
+
     // Register new user directly to MySQL database with validation
     private static void register() {
         System.out.println("\n--- Registration ---");
@@ -110,9 +113,6 @@ public class SmartCityApp {
             password = scanner.nextLine();
         }
 
-        // SQL queries
-        String checkQuery = "SELECT id FROM users WHERE username = ?";
-        String insertQuery = "INSERT INTO users (username, password, role) VALUES (?, ?, ?)";
 
         try {
             // Get database connection
@@ -164,6 +164,8 @@ public class SmartCityApp {
         }
     }
 
+    private static final String query = "SELECT role FROM users WHERE username = ? AND password = ?";
+
     // Login user by validating credentials from MySQL database
     private static void login() {
         System.out.println("\n--- Login ---");
@@ -176,8 +178,7 @@ public class SmartCityApp {
         System.out.print("Enter password: ");
         String password = scanner.nextLine();
 
-        // SQL query to fetch user by username and password
-        String query = "SELECT role FROM users WHERE username = ? AND password = ?";
+
 
         try {
             // Get database connection
@@ -300,11 +301,11 @@ public class SmartCityApp {
             }
         }
     }
-
+   private static final  String queryAllPlaces = "SELECT * FROM places";
     // Display all places in the city from MySQL database
     private static void viewAllPlaces() {
         // SQL query to fetch all places
-        String query = "SELECT * FROM places";
+
 
         try {
             // Get database connection
@@ -316,7 +317,7 @@ public class SmartCityApp {
             }
 
             // Create statement and execute query
-            PreparedStatement pstmt = connection.prepareStatement(query);
+            PreparedStatement pstmt = connection.prepareStatement(queryAllPlaces);
             ResultSet resultSet = pstmt.executeQuery();
 
             // Display header
@@ -392,13 +393,11 @@ public class SmartCityApp {
         }
     }
 
+    private static final String queryByCategory = "SELECT * FROM places WHERE LOWER(category) LIKE LOWER(?)";
     // Search places by category from MySQL database
     private static void searchByCategory() {
         System.out.print("\nEnter category to search: ");
         String searchCategory = scanner.nextLine();
-
-        // SQL query with LIKE for case-insensitive search
-        String query = "SELECT * FROM places WHERE LOWER(category) LIKE LOWER(?)";
 
         try {
             // Get database connection
@@ -410,14 +409,13 @@ public class SmartCityApp {
             }
 
             // Create prepared statement with parameter binding
-            PreparedStatement pstmt = connection.prepareStatement(query);
+            PreparedStatement pstmt = connection.prepareStatement(queryByCategory);
             pstmt.setString(1, "%" + searchCategory + "%"); // Add wildcards for partial matching
             ResultSet resultSet = pstmt.executeQuery();
 
             // Display search results
             System.out.println("\n🔍 Search Results for Category: " + searchCategory);
             System.out.println("-".repeat(50));
-
             boolean found = false;
 
             // Loop through ResultSet and display matching places
@@ -436,7 +434,7 @@ public class SmartCityApp {
 
             // Handle no results found
             if (!found) {
-                System.out.println("[!] No places found in category: '" + searchCategory + "'");
+                System.out.println("[!] Place with Category: " + searchCategory + " not found.");
             }
 
             System.out.println("-".repeat(50));
@@ -452,13 +450,12 @@ public class SmartCityApp {
         }
     }
 
+    private static final String queryByLocation = "SELECT * FROM places WHERE LOWER(location) LIKE LOWER(?)";
+
     // Search places by location from MySQL database
     private static void searchByLocation() {
         System.out.print("\nEnter location to search: ");
         String searchLocation = scanner.nextLine();
-
-        // SQL query with LIKE for case-insensitive search
-        String query = "SELECT * FROM places WHERE LOWER(location) LIKE LOWER(?)";
 
         try {
             // Get database connection
@@ -470,7 +467,7 @@ public class SmartCityApp {
             }
 
             // Create prepared statement with parameter binding
-            PreparedStatement pstmt = connection.prepareStatement(query);
+            PreparedStatement pstmt = connection.prepareStatement(queryByLocation);
             pstmt.setString(1, "%" + searchLocation + "%"); // Add wildcards for partial matching
             ResultSet resultSet = pstmt.executeQuery();
 
@@ -496,7 +493,7 @@ public class SmartCityApp {
 
             // Handle no results found
             if (!found) {
-                System.out.println("[!] No places found in location: '" + searchLocation + "'");
+                System.out.println("[!] Places  with Location: " + searchLocation + " not found.");
             }
 
             System.out.println("-".repeat(50));
@@ -550,6 +547,8 @@ public class SmartCityApp {
         }
     }
 
+    private static final String queryAddNewPlace = "INSERT INTO places (id, name, category, location, description) VALUES (?, ?, ?, ?, ?)";
+
     // Add a new place to the city
     private static void addNewPlace() {
         System.out.println("\n--- Add New Place ---");
@@ -601,9 +600,6 @@ public class SmartCityApp {
         System.out.print("Enter description: ");
         String description = scanner.nextLine();
 
-        // SQL query to insert new place
-        String query = "INSERT INTO places (id, name, category, location, description) VALUES (?, ?, ?, ?, ?)";
-
         try {
             // Get database connection
             Connection connection = DBConnection.getConnection();
@@ -614,7 +610,7 @@ public class SmartCityApp {
             }
 
             // Create prepared statement with parameter binding
-            PreparedStatement pstmt = connection.prepareStatement(query);
+            PreparedStatement pstmt = connection.prepareStatement(queryAddNewPlace);
             pstmt.setInt(1, id);
             pstmt.setString(2, name);
             pstmt.setString(3, category);
@@ -639,6 +635,8 @@ public class SmartCityApp {
             System.out.println("   Error message: " + e.getMessage());
         }
     }
+    private static final String selectQuery = "SELECT * FROM places WHERE id = ?";
+    private static final String updateQuery = "UPDATE places SET name = ?, category = ?, location = ?, description = ? WHERE id = ?";
 
     // Update an existing place in the city
     private static void updatePlace() {
@@ -655,9 +653,6 @@ public class SmartCityApp {
             return;
         }
 
-		String selectQuery = "SELECT * FROM places WHERE id = ?";
-		String updateQuery = "UPDATE places SET name = ?, category = ?, location = ?, description = ? WHERE id = ?";
-
 		try {
 			Connection connection = DBConnection.getConnection();
 
@@ -672,7 +667,7 @@ public class SmartCityApp {
 			ResultSet rs = selectPstmt.executeQuery();
 
 			if (!rs.next()) {
-				System.out.println("[!] No results for ID '" +  placeId + "'");
+				System.out.println("[!] Places with ID " + placeId + " does not exist.");
 				return;
 			}
 
@@ -735,6 +730,7 @@ public class SmartCityApp {
 		}
 	}
 
+    private static final String queryDeletePlace = "DELETE FROM places WHERE id = ?";
     // Delete a place from the city
     private static void deletePlace() {
         System.out.println("\n--- Delete Place ---");
@@ -751,9 +747,6 @@ public class SmartCityApp {
             return;
         }
 
-        // SQL query to delete place by ID
-        String query = "DELETE FROM places WHERE id = ?";
-
         try {
             // Get database connection
             Connection connection = DBConnection.getConnection();
@@ -764,7 +757,7 @@ public class SmartCityApp {
             }
 
             // Create prepared statement with parameter binding
-            PreparedStatement pstmt = connection.prepareStatement(query);
+            PreparedStatement pstmt = connection.prepareStatement(queryDeletePlace);
             pstmt.setInt(1, placeId);
 
             // Execute delete
@@ -773,7 +766,7 @@ public class SmartCityApp {
             if (rowsAffected > 0) {
                 System.out.println("✅ Success! Place with ID " + placeId + " has been deleted.");
             } else {
-                System.out.println("[!] No results for ID '" +  placeId + "'");
+                System.out.println("[!] Places  with ID " + placeId + " does not exist.");
             }
 
             // Close resources
