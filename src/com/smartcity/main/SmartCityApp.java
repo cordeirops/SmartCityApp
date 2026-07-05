@@ -404,7 +404,7 @@ public class SmartCityApp {
     }
 
     // Search places by category from MySQL database
-    // Search places by category from MySQL database
+    
     private static void searchByCategory() {
         System.out.print("\nEnter category to search: ");
         String searchCategory = scanner.nextLine();
@@ -485,8 +485,16 @@ public class SmartCityApp {
 
             // Get and print search result count first
             int totalCount = getSearchResultCount(connection, countQuery, searchLocation);
+
+            // Check if any places match criteria before executing the secondary fetch query
+            if (totalCount == 0) {
+                System.out.println("No places found.");
+                return; // Early exit to optimize database load and skip redundant logic
+            }
+
             System.out.println("Found " + totalCount + " places:");
 
+           
             // Create prepared statement with parameter binding
             PreparedStatement pstmt = connection.prepareStatement(query);
             pstmt.setString(1, "%" + searchLocation + "%"); // Add wildcards for partial matching
