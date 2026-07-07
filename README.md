@@ -239,17 +239,17 @@ A huge shoutout to everyone who has contributed to this project! 🙌
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/rajibul004">
-                    <img src="https://avatars.githubusercontent.com/u/157000457?v=4" width="100;" alt="rajibul004"/>
-                    <br />
-                    <sub><b>Rajibul Mondal</b></sub>
-                </a>
-            </td>
-            <td align="center">
                 <a href="https://github.com/cordeirops">
                     <img src="https://avatars.githubusercontent.com/u/13083210?v=4" width="100;" alt="cordeirops"/>
                     <br />
                     <sub><b>Pedro Sbaraini Cordeiro</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/rajibul004">
+                    <img src="https://avatars.githubusercontent.com/u/157000457?v=4" width="100;" alt="rajibul004"/>
+                    <br />
+                    <sub><b>Rajibul Mondal</b></sub>
                 </a>
             </td>
 		</tr>
